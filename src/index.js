@@ -1,14 +1,4 @@
 import DOCS from './help.html'
- 
-// return docs
-if (url.pathname === "/") {
-  return new Response(DOCS, {
-    status: 200,
-    headers: {
-      "content-type": "text/html"
-    }
-  });
-}
 
 addEventListener("fetch", (event) => {
   event.passThroughOnException();
@@ -18,13 +8,16 @@ addEventListener("fetch", (event) => {
 const dockerHub = "https://registry-1.docker.io";
 
 const routes = {
-  "docker.skrp.top": "https://registry-1.docker.io",
+  "docker.skrp.top": dockerHub,
   "quay.skrp.top": "https://quay.io",
   "gcr.skrp.top": "https://gcr.io",
   "k8s-gcr.skrp.top": "https://k8s.gcr.io",
   "k8s.skrp.top": "https://registry.k8s.io",
   "ghcr.skrp.top": "https://ghcr.io",
   "cloudsmith.skrp.top": "https://docker.cloudsmith.io",
+
+   // staging
+  "docker-staging.skrp.top": dockerHub,
 };
 
 function routeByHosts(host) {
@@ -50,6 +43,16 @@ async function handleRequest(request) {
       }
     );
   }
+  // return docs
+  if (url.pathname === "/") {
+    return new Response(DOCS, {
+      status: 200,
+      headers: {
+        "content-type": "text/html"
+      }
+    });
+  }
+
   const isDockerHub = upstream == dockerHub;
   const authorization = request.headers.get("Authorization");
   if (url.pathname == "/v2/") {
